@@ -11,11 +11,39 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
 
     <script src="./bl-refactorizado-para-playground.js"></script>
 
     <script>
-        pdfMake.createPdf(dd).open();
+        pdfMake.createPdf(dd).getBlob(async (billOfLadingBlob) => {
+            try {
+                const [billOfLadingBytes, termsBytes] = await Promise.all([
+                    billOfLadingBlob.arrayBuffer(),
+                    fetch("./assets/TerminosyCondicionesBL.pdf").then((response) => {
+                        if (!response.ok) {
+                            throw new Error("No se pudo cargar el PDF de T&C.");
+                        }
+                        return response.arrayBuffer();
+                    }),
+                ]);
+
+                const mergedPdf = await PDFLib.PDFDocument.load(billOfLadingBytes);
+                const termsPdf = await PDFLib.PDFDocument.load(termsBytes);
+                const [termsPage] = await mergedPdf.copyPages(termsPdf, [0]);
+
+                mergedPdf.addPage(termsPage);
+
+                const mergedBytes = await mergedPdf.save();
+                const mergedBlob = new Blob([mergedBytes], {
+                    type: "application/pdf",
+                });
+
+                window.open(URL.createObjectURL(mergedBlob), "_blank");
+            } catch (error) {
+                console.error("No se pudo unir el Bill of Lading con los T&C.", error);
+            }
+        });
     </script>
 
 </body>

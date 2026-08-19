@@ -269,6 +269,7 @@ const issueDate = formData.issueDate || "";
 const issuePlace = formData.issuePlace || "";
 
 const containersData = formData.containersData || [];
+const MAX_CONTAINERS_FIRST_PAGE = 10;
 
 const fechaEmision = new Date().toLocaleDateString("es-CO", {
   day: "2-digit",
@@ -298,27 +299,58 @@ const sectionHeader = (text, alignment = "left") => ({
       [
         {
           text,
-          fontSize: 8,
+          fontSize: 7,
           bold: true,
           color: WHITE,
-          fillColor: BLUE,
+          fillColor: DARK,
           alignment,
           border: [false, false, false, false],
-          margin: [6, 4, 6, 4],
+          margin: [4, 0, 4, 0],
         },
       ],
     ],
   },
   layout: "noBorders",
-  margin: [0, 0, 0, 5],
+  margin: [0, 0, 0, 1],
 });
 
 const cellBorder = [true, true, true, true];
 const borderColorArr = [BORDER, BORDER, BORDER, BORDER];
 
+// Recuadro superior independiente: cambia solo relativePosition para moverlo.
+const copyBadge = {
+  stack: [
+    {
+      canvas: [
+        {
+          type: "rect",
+          x: 0,
+          y: 0,
+          w: 155,
+          h: 18,
+          color: BLUE,
+        },
+      ],
+      width: 155,
+      height: 18,
+    },
+    {
+      text: `${tipoCopia} · ${blNo}`,
+      fontSize: 9,
+      bold: true,
+      color: WHITE,
+      alignment: "center",
+      margin: [0, -14, 0, 0],
+    },
+  ],
+  width: 155,
+  height: 18,
+  relativePosition: { x: 0, y: -25 },
+};
+
 // La descripción NO tiene límite de caracteres.
 // El tamaño se mantiene estable; pdfmake se encarga del wrapping.
-const DESCRIPTION_FONT_SIZE = 8.5;
+const DESCRIPTION_FONT_SIZE = 6.8;
 
 // Para descripciones excepcionalmente largas se crean filas de continuación.
 // No limita la cantidad de caracteres: solo evita que una única fila
@@ -360,12 +392,12 @@ const splitDescriptionForPagination = (description = "") => {
 
 const makeContainerCell = (text, options = {}) => ({
   text: text || "",
-  fontSize: options.fontSize || 8.5,
-  lineHeight: options.lineHeight || 1.1,
+  fontSize: options.fontSize || 6.8,
+  lineHeight: options.lineHeight || 1,
   color: DARK,
   border: cellBorder,
   borderColor: borderColorArr,
-  margin: [4, 4, 4, 4],
+  margin: [1, 1, 1, 1],
   ...(options.alignment ? { alignment: options.alignment } : {}),
 });
 
@@ -384,13 +416,13 @@ const containerRows = containersData.flatMap((c) => {
             c.seal ? "\nSEAL: " + c.seal : ""
           }`
         : "",
-      { fontSize: 8.5 }
+      { fontSize: 6.8 }
     ),
 
     makeContainerCell(
       index === 0 ? c.packages || "" : "",
       {
-        fontSize: 8.5,
+        fontSize: 6.8,
         alignment: "center",
       }
     ),
@@ -403,7 +435,7 @@ const containerRows = containersData.flatMap((c) => {
     makeContainerCell(
       index === 0 ? c.grossWeight || "" : "",
       {
-        fontSize: 8.5,
+        fontSize: 6.8,
         alignment: "center",
       }
     ),
@@ -411,7 +443,7 @@ const containerRows = containersData.flatMap((c) => {
     makeContainerCell(
       index === 0 ? c.measurement || "" : "",
       {
-        fontSize: 8.5,
+        fontSize: 6.8,
         alignment: "center",
       }
     ),
@@ -460,7 +492,7 @@ const totalsRow = [
     alignment: "center",
     border: cellBorder,
     borderColor: borderColorArr,
-    margin: [4, 5, 4, 5],
+    margin: [2, 2, 2, 2],
   },
   {
     text: `${totalPackages.toLocaleString("es-CO")} UNIDADES`,
@@ -471,7 +503,7 @@ const totalsRow = [
     alignment: "center",
     border: cellBorder,
     borderColor: borderColorArr,
-    margin: [4, 5, 4, 5],
+    margin: [2, 2, 2, 2],
   },
   {
     text: "TOTAL CARGA",
@@ -482,7 +514,7 @@ const totalsRow = [
     alignment: "center",
     border: cellBorder,
     borderColor: borderColorArr,
-    margin: [4, 5, 4, 5],
+    margin: [2, 2, 2, 2],
   },
   {
     text: `${totalWeight.toLocaleString("es-CO", {
@@ -495,7 +527,7 @@ const totalsRow = [
     alignment: "center",
     border: cellBorder,
     borderColor: borderColorArr,
-    margin: [4, 5, 4, 5],
+    margin: [2, 2, 2, 2],
   },
   {
     text: `${totalMeasurementRounded.toLocaleString("es-CO", {
@@ -508,7 +540,7 @@ const totalsRow = [
     alignment: "center",
     border: cellBorder,
     borderColor: borderColorArr,
-    margin: [4, 5, 4, 5],
+    margin: [2, 2, 2, 2],
   },
 ];
 
@@ -521,31 +553,31 @@ const tableBodyRows =
             text: "",
             border: cellBorder,
             borderColor: borderColorArr,
-            margin: [4, 4, 4, 4],
+            margin: [3, 3, 3, 3],
           },
           {
             text: "",
             border: cellBorder,
             borderColor: borderColorArr,
-            margin: [4, 4, 4, 4],
+            margin: [3, 3, 3, 3],
           },
           {
             text: "",
             border: cellBorder,
             borderColor: borderColorArr,
-            margin: [4, 4, 4, 4],
+            margin: [3, 3, 3, 3],
           },
           {
             text: "",
             border: cellBorder,
             borderColor: borderColorArr,
-            margin: [4, 4, 4, 4],
+            margin: [3, 3, 3, 3],
           },
           {
             text: "",
             border: cellBorder,
             borderColor: borderColorArr,
-            margin: [4, 4, 4, 4],
+            margin: [3, 3, 3, 3],
           },
         ],
       ];
@@ -554,66 +586,11 @@ var pdfDefinition = {
   pageSize: "LETTER",
   pageOrientation: "landscape",
 
-  // Espacio superior e inferior para evitar que el contenido
-  // choque con el header/footer.
-  pageMargins: [0, 0, 0, 62],
+  pageMargins: [0, 0, 0, 0],
 
   defaultStyle: {
     font: "Roboto",
   },
-
-  // — FOOTER REPETIDO EN TODAS LAS PÁGINAS —
-  footer: (currentPage, pageCount) => ({
-    table: {
-      widths: ["*"],
-      body: [
-        [
-          {
-            fillColor: DARK,
-            border: [false, false, false, false],
-            columns: [
-              {
-                stack: [
-                  {
-                    text: "KARGORU SAS",
-                    fontSize: 11,
-                    bold: true,
-                    color: BLUE,
-                    margin: [36, 16, 0, 4],
-                  },
-                  {
-                    text: `${forwarderNit} · ${forwarderFullAddress}`,
-                    fontSize: 9,
-                    color: "#7a9cc4",
-                    margin: [36, 0, 0, 16],
-                  },
-                ],
-              },
-              {
-                stack: [
-                  {
-                    text: t.docGenerado,
-                    fontSize: 9,
-                    color: "#7a9cc4",
-                    margin: [0, 16, 36, 4],
-                    alignment: "right",
-                  },
-                  {
-                    text: `${fechaEmision} · kargoru.com`,
-                    fontSize: 9,
-                    color: "#9fb8d4",
-                    margin: [0, 0, 36, 16],
-                    alignment: "right",
-                  },
-                ],
-              },
-            ],
-          },
-        ],
-      ],
-    },
-    layout: "noBorders",
-  }),
 
   content: [
     // — HEADER —
@@ -627,75 +604,60 @@ var pdfDefinition = {
               border: [false, false, false, false],
               columns: [
                 {
-                  width: "*",
-                  margin: [-250, 0, 0, 0],
+                  width: "50%",
                   stack: [
                     {
                       svg: KARGORU_SVG,
-                      width: 90,
-                      alignment: "center",
-                      margin: [0, 2, 0, 0],
+                      width: 60,
+                      alignment: "left",
+                      margin: [24, 0, 0, 0],
                     },
                     {
-                      text: "kargoru",
-                      fontSize: 30,
+                      text: "KARGORU SAS",
+                      fontSize: 16,
                       bold: true,
                       color: WHITE,
-                      alignment: "center",
-                      margin: [0, 2, 0, 0],
+                      margin: [15, -1, 0, 0],
                     },
                     {
                       text: "Simplificamos la logística",
-                      fontSize: 11,
+                      fontSize: 8,
                       color: "#9fb8d4",
-                      alignment: "center",
-                      margin: [0, 2, 0, 10],
+                      margin: [24, 0, 0, 1],
                     },
                   ],
                 },
-
                 {
-                  width: "*",
-                  margin: [-380, 0, 0, 0],
+                  width: "50%",
                   stack: [
                     {
                       text: t.documento,
-                      fontSize: 11,
+                      fontSize: 8,
                       color: "#9fb8d4",
-                      margin: [0, 30, 0, 0],
-                      alignment: "center",
+                      margin: [0, 8, 16, 0],
+                      alignment: "right",
                     },
                     {
                       text: t.billOfLading,
-                      fontSize: 24,
+                      fontSize: 14,
                       bold: true,
                       color: WHITE,
-                      margin: [0, 0, 0, 4],
-                      alignment: "center",
-                    },
-                    {
-                      table: {
-                        widths: ["auto"],
-                        body: [
-                          [
-                            {
-                              text: `${tipoCopia} · ${blNo}`,
-                              fontSize: 12,
-                              bold: true,
-                              color: WHITE,
-                              fillColor: BLUE,
-                              border: [false, false, false, false],
-                              margin: [12, 5, 12, 5],
-                            },
-                          ],
-                        ],
-                      },
-                      layout: "noBorders",
-                      alignment: "center",
-                      margin: [294, 0, 0, 14],
+                      margin: [0, 0, 16, 1],
+                      alignment: "right",
                     },
                   ],
                 },
+              ],
+            },
+          ],
+          [
+            {
+              fillColor: DARK,
+              border: [false, false, false, false],
+              columns: [
+                { width: "*", text: "" },
+                copyBadge,
+                { width: "*", text: "" },
               ],
             },
           ],
@@ -714,7 +676,7 @@ var pdfDefinition = {
               text: "",
               border: [false, false, false, false],
               fillColor: BLUE,
-              margin: [0, 2, 0, 2],
+              margin: [0, 1, 0, 1],
             },
           ],
         ],
@@ -724,11 +686,10 @@ var pdfDefinition = {
 
     // — BODY —
     {
-      margin: [12, 18, 12, 0],
+      margin: [3, 2, 3, 0],
       stack: [
         // FILA 1: SHIPPER / BOOKING-BL
         {
-          unbreakable: true,
           table: {
             widths: ["50%", "25%", "25%"],
             body: [
@@ -740,10 +701,10 @@ var pdfDefinition = {
                     sectionHeader(t.shipperExporter),
                     {
                       text: shipperFullText,
-                      fontSize: 11,
+                      fontSize: 7.2,
                       color: DARK,
-                      margin: [8, 0, 8, 8],
-                      lineHeight: 1.25,
+                      margin: [4, 0, 4, 3],
+                      lineHeight: 1,
                     },
                   ],
                 },
@@ -754,10 +715,10 @@ var pdfDefinition = {
                     sectionHeader(t.bookingNo),
                     {
                       text: bookingNo,
-                      fontSize: 13,
+                      fontSize: 11,
                       bold: true,
                       color: DARK,
-                      margin: [8, 0, 8, 8],
+                      margin: [4, 0, 4, 2],
                     },
                   ],
                 },
@@ -771,7 +732,7 @@ var pdfDefinition = {
                       fontSize: 13,
                       bold: true,
                       color: DARK,
-                      margin: [8, 0, 8, 8],
+                      margin: [6, 0, 6, 4],
                     },
                   ],
                 },
@@ -782,7 +743,6 @@ var pdfDefinition = {
 
         // FILA 2: CONSIGNEE / KARGORU SAS
         {
-          unbreakable: true,
           table: {
             widths: ["50%", "50%"],
             body: [
@@ -794,10 +754,10 @@ var pdfDefinition = {
                     sectionHeader(t.consignee),
                     {
                       text: consigneeFullText,
-                      fontSize: 11,
+                      fontSize: 7.2,
                       color: DARK,
-                      margin: [8, 0, 8, 8],
-                      lineHeight: 1.25,
+                      margin: [4, 0, 4, 3],
+                      lineHeight: 1,
                     },
                   ],
                 },
@@ -807,32 +767,26 @@ var pdfDefinition = {
                   fillColor: LIGHT,
                   stack: [
                     {
-                      svg: KARGORU_SVG,
-                      width: 80,
-                      alignment: "center",
-                      margin: [0, 12, 0, 4],
-                    },
-                    {
                       text: "KARGORU SAS",
                       fontSize: 18,
                       bold: true,
                       color: DARK,
                       alignment: "center",
-                      margin: [6, 0, 6, 2],
+                      margin: [4, 0, 4, 1],
                     },
                     {
                       text: forwarderNit,
                       fontSize: 10,
                       color: "#5a6a80",
                       alignment: "center",
-                      margin: [6, 4, 6, 2],
+                      margin: [4, 2, 4, 1],
                     },
                     {
                       text: forwarderAddress,
                       fontSize: 10,
                       color: "#5a6a80",
                       alignment: "center",
-                      margin: [6, 0, 6, 2],
+                      margin: [4, 0, 4, 1],
                     },
                     {
                       text: forwarderCity,
@@ -840,7 +794,7 @@ var pdfDefinition = {
                       bold: true,
                       color: DARK,
                       alignment: "center",
-                      margin: [6, 0, 6, 10],
+                      margin: [4, 0, 4, 4],
                     },
                   ],
                 },
@@ -848,9 +802,8 @@ var pdfDefinition = {
             ],
           },
         },
-                // FILA 3: NOTIFY PARTY / TEXTO LEGAL
+      // FILA 3: NOTIFY PARTY / TEXTO LEGAL
         {
-          unbreakable: true,
           table: {
             widths: ["50%", "50%"],
             body: [
@@ -862,10 +815,10 @@ var pdfDefinition = {
                     sectionHeader(t.notifyParty),
                     {
                       text: notifyFullText,
-                      fontSize: 11,
+                      fontSize: 8.5,
                       color: DARK,
-                      margin: [8, 0, 8, 8],
-                      lineHeight: 1.25,
+                      margin: [4, 0, 4, 3],
+                      lineHeight: 1.05,
                     },
                   ],
                 },
@@ -877,11 +830,11 @@ var pdfDefinition = {
                     sectionHeader("RECEIVED / RECEPCIÓN"),
                     {
                       text: t.receivedText,
-                      fontSize: 8,
+                      fontSize: 6.5,
                       color: "#5a6a80",
                       alignment: "justify",
-                      margin: [8, 0, 8, 8],
-                      lineHeight: 1.25,
+                      margin: [3, 0, 3, 2],
+                      lineHeight: 1,
                     },
                   ],
                 },
@@ -901,16 +854,16 @@ var pdfDefinition = {
                   stack: [
                     {
                       text: t.preCarriageBy,
-                      fontSize: 9,
+                      fontSize: 7.2,
                       bold: true,
                       color: GRAY,
-                      margin: [6, 6, 6, 2],
+                      margin: [5, 3, 5, 1],
                     },
                     {
                       text: preCarriageBy,
-                      fontSize: 11,
+                      fontSize: 8,
                       color: DARK,
-                      margin: [6, 0, 6, 6],
+                      margin: [4, 0, 4, 2],
                     },
                   ],
                 },
@@ -920,18 +873,18 @@ var pdfDefinition = {
                   stack: [
                     {
                       text: t.placeOfReceipt,
-                      fontSize: 9,
+                      fontSize: 7.2,
                       bold: true,
                       color: GRAY,
                       alignment: "center",
-                      margin: [6, 6, 6, 2],
+                      margin: [6, 0, 6, 1],
                     },
                     {
                       text: placeOfReceipt,
-                      fontSize: 11,
+                      fontSize: 8,
                       color: DARK,
                       alignment: "center",
-                      margin: [6, 0, 6, 6],
+                      margin: [4, 0, 4, 2],
                     },
                   ],
                 },
@@ -952,16 +905,16 @@ var pdfDefinition = {
                   stack: [
                     {
                       text: t.vesselVoyageFlag,
-                      fontSize: 9,
+                      fontSize: 7.2,
                       bold: true,
                       color: GRAY,
-                      margin: [6, 6, 6, 2],
+                      margin: [6, 4, 6, 1],
                     },
                     {
                       text: vesselVoyageFlag,
-                      fontSize: 11,
+                      fontSize: 8,
                       color: DARK,
-                      margin: [6, 0, 6, 6],
+                      margin: [6, 0, 6, 4],
                     },
                   ],
                 },
@@ -971,18 +924,18 @@ var pdfDefinition = {
                   stack: [
                     {
                       text: t.portOfLoading,
-                      fontSize: 9,
+                      fontSize: 7.2,
                       bold: true,
                       color: GRAY,
                       alignment: "center",
-                      margin: [6, 6, 6, 2],
+                      margin: [6, 4, 6, 1],
                     },
                     {
                       text: portOfLoading,
-                      fontSize: 11,
+                      fontSize: 8,
                       color: DARK,
                       alignment: "center",
-                      margin: [6, 0, 6, 6],
+                      margin: [6, 0, 6, 4],
                     },
                   ],
                 },
@@ -992,18 +945,18 @@ var pdfDefinition = {
                   stack: [
                     {
                       text: t.etdLoading,
-                      fontSize: 9,
+                      fontSize: 7.2,
                       bold: true,
                       color: GRAY,
                       alignment: "center",
-                      margin: [6, 6, 6, 2],
+                      margin: [6, 4, 6, 1],
                     },
                     {
                       text: etdLoading,
-                      fontSize: 11,
+                      fontSize: 8,
                       color: DARK,
                       alignment: "center",
-                      margin: [6, 0, 6, 6],
+                      margin: [6, 0, 6, 4],
                     },
                   ],
                 },
@@ -1013,19 +966,19 @@ var pdfDefinition = {
                   stack: [
                     {
                       text: t.originalsBL,
-                      fontSize: 9,
+                      fontSize: 7.2,
                       bold: true,
                       color: GRAY,
                       alignment: "center",
-                      margin: [4, 5, 4, 2],
+                      margin: [4, 4, 4, 1],
                     },
                     {
                       text: String(originalsBL),
-                      fontSize: 12,
+                      fontSize: 9,
                       bold: true,
                       color: BLUE,
                       alignment: "center",
-                      margin: [4, 0, 4, 6],
+                      margin: [4, 0, 4, 4],
                     },
                   ],
                 },
@@ -1046,17 +999,17 @@ var pdfDefinition = {
                   stack: [
                     {
                       text: t.portOfDischarge,
-                      fontSize: 9,
+                      fontSize: 7.2,
                       bold: true,
                       color: GRAY,
-                      margin: [6, 6, 6, 2],
+                      margin: [6, 4, 6, 1],
                     },
                     {
                       text: portOfDischarge,
-                      fontSize: 13,
+                      fontSize: 8,
                       bold: true,
                       color: DARK,
-                      margin: [6, 0, 6, 6],
+                      margin: [6, 0, 6, 4],
                     },
                   ],
                 },
@@ -1066,18 +1019,18 @@ var pdfDefinition = {
                   stack: [
                     {
                       text: t.placeOfDelivery,
-                      fontSize: 9,
+                      fontSize: 7.2,
                       bold: true,
                       color: GRAY,
                       alignment: "center",
-                      margin: [6, 6, 6, 2],
+                      margin: [6, 4, 6, 1],
                     },
                     {
                       text: placeOfDelivery,
-                      fontSize: 11,
+                      fontSize: 8,
                       color: DARK,
                       alignment: "center",
-                      margin: [6, 0, 6, 6],
+                      margin: [6, 0, 6, 4],
                     },
                   ],
                 },
@@ -1088,15 +1041,15 @@ var pdfDefinition = {
                   stack: [
                     {
                       text: t.typeOfMovement,
-                      fontSize: 9,
+                      fontSize: 7.2,
                       bold: true,
                       color: GRAY,
                       alignment: "center",
-                      margin: [6, 6, 6, 2],
+                      margin: [6, 4, 6, 1],
                     },
                     {
                       text: typeOfMovement,
-                      fontSize: 15,
+                      fontSize: 10,
                       bold: true,
                       color: BLUE,
                       alignment: "center",
@@ -1108,19 +1061,11 @@ var pdfDefinition = {
             ],
           },
         },
-
-        // ============================================================
-        // // SALTO CONTROLADO: PÁGINA 1 → PÁGINA 2
-        // La primera página termina después de NOTIFY / RECEIVED.
-        // ============================================================
-        {
-          text: "",
-          pageBreak: "after",
-          margin: [0, 0, 0, 0],
-        },
-
         // PARTICULARS HEADER
         {
+          ...(containersData.length > MAX_CONTAINERS_FIRST_PAGE
+            ? { pageBreak: "before" }
+            : {}),
           table: {
             widths: ["*"],
             body: [
@@ -1134,12 +1079,13 @@ var pdfDefinition = {
                   alignment: "center",
                   border: cellBorder,
                   borderColor: borderColorArr,
-                  margin: [4, 5, 4, 5],
+                  margin: [2, 2, 2, 2],
                 },
               ],
             ],
           },
-          margin: [0, 8, 0, 0],
+          keepWithNext: 1,
+          margin: [0, 4, 0, 0],
         },
 
         // TABLA DE CONTENEDORES
@@ -1227,134 +1173,68 @@ var pdfDefinition = {
               [
                 {
                   text: tipoCopia,
-                  fontSize: 16,
+                  fontSize: 11,
                   bold: true,
                   color: WHITE,
                   fillColor: DARK,
                   alignment: "center",
                   border: cellBorder,
                   borderColor: borderColorArr,
-                  margin: [6, 7, 6, 5],
+                  margin: [3, 3, 3, 3],
                 },
                 {
                   text: t.dateAndPlace,
-                  fontSize: 10,
+                  fontSize: 7,
                   bold: true,
                   color: GRAY,
                   fillColor: LIGHT,
                   alignment: "center",
                   border: cellBorder,
                   borderColor: borderColorArr,
-                  margin: [6, 5, 6, 5],
+                  margin: [3, 3, 3, 3],
                 },
                 {
                   text: issueDate,
-                  fontSize: 12,
+                  fontSize: 8,
                   bold: true,
                   color: DARK,
                   fillColor: LIGHT,
                   alignment: "center",
                   border: cellBorder,
                   borderColor: borderColorArr,
-                  margin: [6, 5, 6, 5],
+                  margin: [3, 3, 3, 3],
                 },
                 {
                   fillColor: LIGHT,
                   border: cellBorder,
                   borderColor: borderColorArr,
-                  margin: [6, 5, 6, 5],
+                  margin: [3, 3, 3, 3],
                   stack: [
                     {
                       text: issuePlace,
-                      fontSize: 12,
+                      fontSize: 8,
                       bold: true,
                       color: DARK,
                       alignment: "center",
                     },
                     {
                       text: t.by,
-                      fontSize: 9,
+                      fontSize: 7,
                       bold: true,
                       color: BLUE,
                       alignment: "right",
-                      margin: [0, 6, 0, 0],
+                      margin: [0, 2, 0, 0],
                     },
                   ],
                 },
               ],
             ],
           },
-
-          margin: [0, 4, 12, 2],
+          margin: [0, 1, 4, 1],
         },
       ],
     },
 
-    // ================================================================
-    // CONTRATO
-    // ================================================================
-    // ORIGINAL, COPIA NO NEGOCIABLE, TELEX RELEASE y WAYBILL:
-    // llevan contrato.
-    //
-    // DRAFT:
-    // no lo agrega por el requerimiento de Juan Sebastián.
-    //
-    // Cuando recibamos el PDF real del contrato, esta sección deberá
-    // sustituirse por el contenido definitivo.
-    // ================================================================
-    ...(tipoCopia !== "DRAFT"
-  ? [
-      {
-        pageBreak: "before",
-
-        margin: [24, 24, 24, 24],
-
-        stack: [
-          {
-            table: {
-              widths: ["*"],
-              body: [
-                [
-                  {
-                    text: "",
-                    fillColor: DARK,
-                    border: [false, false, false, false],
-                    margin: [0, 4, 0, 4],
-                  },
-                ],
-              ],
-            },
-            layout: "noBorders",
-            margin: [0, 0, 0, 24],
-          },
-
-          {
-            text: t.contractTitle,
-            fontSize: 18,
-            bold: true,
-            color: DARK,
-            margin: [0, 0, 0, 14],
-          },
-
-          {
-            text: t.contractSubtitle,
-            fontSize: 10,
-            color: "#5a6a80",
-            lineHeight: 1.35,
-            margin: [0, 0, 0, 18],
-          },
-
-          {
-            text: t.contractBody,
-            fontSize: 9,
-            color: DARK,
-            lineHeight: 1.4,
-            alignment: "justify",
-          },
-        ],
-      },
-    ]
-  : []),
   ],
 
   styles: {
