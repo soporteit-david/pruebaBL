@@ -77,7 +77,7 @@ var formData = {
     {
       containerNumber: "MSCU4471029",
       seal: "CO8842197",
-      packages: "1.120 CAJAS",
+      packages: "1.120",
       description:
         "CAFÉ VERDE EN GRANO, EXCELSO UGQ.\nPARTIDA ARANCELARIA: 0901.11.10.00",
       grossWeight: "19.840,00 KGS",
@@ -86,7 +86,7 @@ var formData = {
     {
       containerNumber: "TGHU7719004",
       seal: "CO8842198",
-      packages: "860 BULTOS",
+      packages: "860",
       description:
         "PLÁTANO HARTÓN VERDE FRESCO PARA EXPORTACIÓN, CALIBRE 39-49, EMPACADO EN CAJA DE CARTÓN CORRUGADO DE 22 KG NETO CON BOLSA DE POLIETILENO PERFORADA Y ABSORBENTE DE ETILENO, PALETIZADO EN ESTIBA DE MADERA TRATADA NIMF-15 CON ESQUINEROS Y ZUNCHO PLÁSTICO, TEMPERATURA DE TRANSPORTE 13,3 °C, VENTILACIÓN 25 M3/H, ATMÓSFERA CONTROLADA NO APLICA.\nPARTIDA ARANCELARIA: 0803.10.10.00",
       grossWeight: "18.920,00 KGS",
@@ -95,11 +95,91 @@ var formData = {
     {
       containerNumber: "CAIU9930517",
       seal: "CO8842199",
-      packages: "640 CAJAS",
+      packages: "640",
       description:
         "AGUACATE HASS FRESCO.\nPARTIDA ARANCELARIA: 0804.40.00.00",
       grossWeight: "17.400,00 KGS",
       measurement: "26,800 M3",
+    },
+    {
+      containerNumber: "MSCU4471030",
+      seal: "CO8842200",
+      packages: "420",
+      description: "CACAO EN GRANO FERMENTADO.\nPARTIDA ARANCELARIA: 1801.00.10.00",
+      grossWeight: "12.600,00 KGS",
+      measurement: "18,200 M3",
+    },
+    {
+      containerNumber: "TGHU7719005",
+      seal: "CO8842201",
+      packages: "315",
+      description: "MANGO TOMMY FRESCO PARA EXPORTACIÓN.\nPARTIDA ARANCELARIA: 0804.50.20.00",
+      grossWeight: "9.450,00 KGS",
+      measurement: "15,700 M3",
+    },
+    {
+      containerNumber: "CAIU9930518",
+      seal: "CO8842202",
+      packages: "280",
+      description: "LIMÓN TAHITÍ FRESCO, CALIBRE EXPORTACIÓN.\nPARTIDA ARANCELARIA: 0805.50.22.00",
+      grossWeight: "8.400,00 KGS",
+      measurement: "14,100 M3",
+    },
+    {
+      containerNumber: "MSCU4471031",
+      seal: "CO8842203",
+      packages: "190",
+      description: "FLORES FRESCAS CORTADAS, VARIEDAD MIXTA.\nPARTIDA ARANCELARIA: 0603.19.90.00",
+      grossWeight: "5.700,00 KGS",
+      measurement: "22,400 M3",
+    },
+    {
+      containerNumber: "TGHU7719006",
+      seal: "CO8842204",
+      packages: "510",
+      description: "AZÚCAR DE CAÑA REFINADA EN SACOS.\nPARTIDA ARANCELARIA: 1701.99.90.00",
+      grossWeight: "25.500,00 KGS",
+      measurement: "20,600 M3",
+    },
+    {
+      containerNumber: "CAIU9930519",
+      seal: "CO8842205",
+      packages: "360",
+      description: "PIÑA GOLD FRESCA, EMPACADA PARA EXPORTACIÓN.\nPARTIDA ARANCELARIA: 0804.30.00.00",
+      grossWeight: "10.800,00 KGS",
+      measurement: "19,300 M3",
+    },
+    {
+      containerNumber: "MSCU4471032",
+      seal: "CO8842206",
+      packages: "275",
+      description: "YUCA FRESCA EMPACADA EN CAJAS DE CARTÓN.\nPARTIDA ARANCELARIA: 0714.10.00.00",
+      grossWeight: "8.250,00 KGS",
+      measurement: "16,500 M3",
+    },
+    {
+      containerNumber: "TGHU7719007",
+      seal: "CO8842207",
+      packages: "145",
+      description: "ACEITE DE PALMA REFINADO EN TAMBORES.\nPARTIDA ARANCELARIA: 1511.90.00.00",
+      grossWeight: "7.250,00 KGS",
+      measurement: "9,800 M3",
+    },
+    {
+      containerNumber: "CAIU9930520",
+      seal: "CO8842208",
+      packages: "225",
+      description: "ARROZ BLANCO EMPACADO EN SACOS DE 25 KG.\nPARTIDA ARANCELARIA: 1006.30.00.00",
+      grossWeight: "5.625,00 KGS",
+      measurement: "11,200 M3",
+    },
+    {
+      containerNumber: "MSCU4471033",
+      seal: "CO8842209",
+      packages: "180",
+      description: "MADERA ASERRADA DE PINO TRATADA.\nPARTIDA ARANCELARIA: 4407.11.00.00",
+      grossWeight: "14.400,00 KGS",
+      measurement: "24,700 M3",
     },
   ],
 };
@@ -269,7 +349,7 @@ const issueDate = formData.issueDate || "";
 const issuePlace = formData.issuePlace || "";
 
 const containersData = formData.containersData || [];
-const MAX_CONTAINERS_FIRST_PAGE = 10;
+const MAX_CONTAINERS_FIRST_PAGE = 4;
 
 const fechaEmision = new Date().toLocaleDateString("es-CO", {
   day: "2-digit",
@@ -495,7 +575,7 @@ const totalsRow = [
     margin: [2, 2, 2, 2],
   },
   {
-    text: `${totalPackages.toLocaleString("es-CO")} UNIDADES`,
+    text: `${totalPackages.toLocaleString("es-CO")}`,
     bold: true,
     fontSize: 9,
     color: DARK,
@@ -544,6 +624,118 @@ const totalsRow = [
   },
 ];
 
+const particularsRows = containersData.flatMap((c) => {
+  const descriptionChunks = splitDescriptionForPagination(
+    c.description || ""
+  );
+  const containerType = c.containerType || "1X40' STD CONTAINER STC";
+
+  return descriptionChunks.map((descriptionChunk, index) => [
+    {
+      text:
+        index === 0
+          ? `${c.containerNumber || ""}${c.seal ? "\nSEAL: " + c.seal : ""}`
+          : "",
+      fontSize: DESCRIPTION_FONT_SIZE,
+      lineHeight: 1.1,
+      color: DARK,
+      border: [true, false, true, false],
+      borderColor: borderColorArr,
+      margin: [5, 3, 5, 3],
+    },
+    {
+      text: index === 0 ? c.packages || "" : "",
+      fontSize: DESCRIPTION_FONT_SIZE,
+      alignment: "center",
+      color: DARK,
+      border: [true, false, true, false],
+      borderColor: borderColorArr,
+      margin: [5, 3, 5, 3],
+    },
+    {
+      text:
+        index === 0
+          ? `${containerType}\n${descriptionChunk}`
+          : descriptionChunk,
+      fontSize: DESCRIPTION_FONT_SIZE,
+      lineHeight: 1.1,
+      color: DARK,
+      border: [true, false, true, false],
+      borderColor: borderColorArr,
+      margin: [5, 3, 5, 3],
+    },
+    {
+      text: index === 0 ? c.grossWeight || "" : "",
+      fontSize: DESCRIPTION_FONT_SIZE,
+      alignment: "center",
+      color: DARK,
+      border: [true, false, true, false],
+      borderColor: borderColorArr,
+      margin: [5, 3, 5, 3],
+    },
+    {
+      text: index === 0 ? c.measurement || "" : "",
+      fontSize: DESCRIPTION_FONT_SIZE,
+      alignment: "center",
+      color: DARK,
+      border: [true, false, true, false],
+      borderColor: borderColorArr,
+      margin: [5, 3, 5, 3],
+    },
+  ]);
+});
+
+const particularsTotalsRow = [
+  {
+    text: "TOTALES",
+    bold: true,
+    fontSize: 8.5,
+    color: DARK,
+    fillColor: LIGHT,
+    alignment: "left",
+    border: cellBorder,
+    borderColor: borderColorArr,
+    margin: [5, 4, 5, 4],
+  },
+  {
+    text: `${totalPackages.toLocaleString("es-CO")}`,
+    bold: true,
+    fontSize: 8.5,
+    color: DARK,
+    fillColor: LIGHT,
+    alignment: "center",
+    border: cellBorder,
+    borderColor: borderColorArr,
+    margin: [5, 4, 5, 4],
+  },
+  {
+    text: `${totalWeight.toLocaleString("es-CO", {
+      minimumFractionDigits: 2,
+    })} KGS`,
+    bold: true,
+    fontSize: 8.5,
+    color: DARK,
+    fillColor: LIGHT,
+    alignment: "center",
+    border: cellBorder,
+    borderColor: borderColorArr,
+    margin: [5, 4, 5, 4],
+  },
+  {
+    text: `${totalMeasurementRounded.toLocaleString("es-CO", {
+      minimumFractionDigits: 3,
+    })} M3`,
+    bold: true,
+    fontSize: 8.5,
+    color: DARK,
+    fillColor: LIGHT,
+    alignment: "center",
+    border: cellBorder,
+    borderColor: borderColorArr,
+    margin: [5, 4, 5, 4],
+  },
+];
+
 const tableBodyRows =
   containerRows.length > 0
     ? containerRows
@@ -582,6 +774,61 @@ const tableBodyRows =
         ],
       ];
 
+const pdfFooter = {
+  table: {
+    widths: ["30%", "18%", "30%", "22%"],
+    body: [
+      [
+        {
+          text: tipoCopia,
+          fontSize: 11,
+          bold: true,
+          color: WHITE,
+          fillColor: DARK,
+          alignment: "center",
+          border: cellBorder,
+          borderColor: borderColorArr,
+          margin: [1, 1, 1, 1],
+        },
+        {
+          text: t.dateAndPlace,
+          fontSize: 7,
+          bold: true,
+          color: GRAY,
+          fillColor: LIGHT,
+          alignment: "center",
+          border: cellBorder,
+          borderColor: borderColorArr,
+          margin: [1, 1, 1, 1],
+        },
+        {
+          text: issueDate,
+          fontSize: 8,
+          bold: true,
+          color: DARK,
+          fillColor: LIGHT,
+          alignment: "center",
+          border: cellBorder,
+          borderColor: borderColorArr,
+          margin: [1, 1, 1, 1],
+        },
+        {
+          text: `${issuePlace}\n${t.by}`,
+          fontSize: 7,
+          bold: true,
+          color: DARK,
+          fillColor: LIGHT,
+          alignment: "center",
+          border: cellBorder,
+          borderColor: borderColorArr,
+          margin: [1, 1, 1, 1],
+        },
+      ],
+    ],
+  },
+  margin: [0, 0, 4, 0],
+};
+
 var pdfDefinition = {
   pageSize: "LETTER",
   pageOrientation: "landscape",
@@ -613,7 +860,7 @@ var pdfDefinition = {
                       margin: [24, 0, 0, 0],
                     },
                     {
-                      text: "KARGORU SAS",
+                      text: "KARGORU",
                       fontSize: 16,
                       bold: true,
                       color: WHITE,
@@ -1063,9 +1310,6 @@ var pdfDefinition = {
         },
         // PARTICULARS HEADER
         {
-          ...(containersData.length > MAX_CONTAINERS_FIRST_PAGE
-            ? { pageBreak: "before" }
-            : {}),
           table: {
             widths: ["*"],
             body: [
@@ -1088,12 +1332,10 @@ var pdfDefinition = {
           margin: [0, 4, 0, 0],
         },
 
-        // TABLA DE CONTENEDORES
+        // LISTA SIMPLE DE MERCANCÍAS
         {
           table: {
             headerRows: 1,
-            // IMPORTANTE:
-            // una fila no se parte entre dos páginas.
             dontBreakRows: true,
             keepWithHeaderRows: 1,
 
@@ -1110,7 +1352,7 @@ var pdfDefinition = {
                   alignment: "center",
                   border: cellBorder,
                   borderColor: borderColorArr,
-                  margin: [4, 4, 4, 4],
+                  margin: [5, 4, 5, 4],
                 },
                 {
                   text: t.noPkgs,
@@ -1121,7 +1363,7 @@ var pdfDefinition = {
                   alignment: "center",
                   border: cellBorder,
                   borderColor: borderColorArr,
-                  margin: [4, 4, 4, 4],
+                  margin: [5, 4, 5, 4],
                 },
                 {
                   text: t.descriptionGoods,
@@ -1132,7 +1374,7 @@ var pdfDefinition = {
                   alignment: "center",
                   border: cellBorder,
                   borderColor: borderColorArr,
-                  margin: [4, 4, 4, 4],
+                  margin: [5, 4, 5, 4],
                 },
                 {
                   text: t.grossWeight,
@@ -1143,7 +1385,7 @@ var pdfDefinition = {
                   alignment: "center",
                   border: cellBorder,
                   borderColor: borderColorArr,
-                  margin: [4, 4, 4, 4],
+                  margin: [5, 4, 5, 4],
                 },
                 {
                   text: t.measurement,
@@ -1154,18 +1396,65 @@ var pdfDefinition = {
                   alignment: "center",
                   border: cellBorder,
                   borderColor: borderColorArr,
-                  margin: [4, 4, 4, 4],
+                  margin: [5, 4, 5, 4],
                 },
               ],
-
-              ...tableBodyRows,
-
-              totalsRow,
+              ...(particularsRows.length
+                ? particularsRows
+                : [
+                    [
+                      {
+                        text: "",
+                        border: cellBorder,
+                        borderColor: borderColorArr,
+                        margin: [5, 8, 5, 8],
+                      },
+                      {
+                        text: "",
+                        border: cellBorder,
+                        borderColor: borderColorArr,
+                        margin: [5, 8, 5, 8],
+                      },
+                      {
+                        text: "",
+                        border: cellBorder,
+                        borderColor: borderColorArr,
+                        margin: [5, 8, 5, 8],
+                      },
+                      {
+                        text: "",
+                        border: cellBorder,
+                        borderColor: borderColorArr,
+                        margin: [5, 8, 5, 8],
+                      },
+                      {
+                        text: "",
+                        border: cellBorder,
+                        borderColor: borderColorArr,
+                        margin: [5, 8, 5, 8],
+                      },
+                    ],
+                  ]),
+              [
+                particularsTotalsRow[0],
+                particularsTotalsRow[1],
+                {
+                  text: "",
+                  fillColor: LIGHT,
+                  border: cellBorder,
+                  borderColor: borderColorArr,
+                  margin: [5, 4, 5, 4],
+                },
+                particularsTotalsRow[2],
+                particularsTotalsRow[3],
+              ],
             ],
           },
         },
-      // FILA FINAL: TIPO COPIA / FECHA Y LUGAR / BY
-        {
+      // FOOTER: solo aparece cuando PARTICULARS comienza en la segunda página.
+      ...(containersData.length > MAX_CONTAINERS_FIRST_PAGE
+        ? [
+            {
           unbreakable: true,
           table: {
             widths: ["30%", "18%", "30%", "22%"],
@@ -1180,7 +1469,7 @@ var pdfDefinition = {
                   alignment: "center",
                   border: cellBorder,
                   borderColor: borderColorArr,
-                  margin: [3, 3, 3, 3],
+                  margin: [1, 1, 1, 1],
                 },
                 {
                   text: t.dateAndPlace,
@@ -1191,7 +1480,7 @@ var pdfDefinition = {
                   alignment: "center",
                   border: cellBorder,
                   borderColor: borderColorArr,
-                  margin: [3, 3, 3, 3],
+                  margin: [1, 1, 1, 1],
                 },
                 {
                   text: issueDate,
@@ -1202,36 +1491,38 @@ var pdfDefinition = {
                   alignment: "center",
                   border: cellBorder,
                   borderColor: borderColorArr,
-                  margin: [3, 3, 3, 3],
+                  margin: [1, 1, 1, 1],
                 },
                 {
                   fillColor: LIGHT,
                   border: cellBorder,
                   borderColor: borderColorArr,
-                  margin: [3, 3, 3, 3],
+                  margin: [1, 1, 1, 1],
                   stack: [
                     {
                       text: issuePlace,
-                      fontSize: 8,
+                      fontSize: 7,
                       bold: true,
                       color: DARK,
                       alignment: "center",
                     },
                     {
                       text: t.by,
-                      fontSize: 7,
+                      fontSize: 6,
                       bold: true,
                       color: BLUE,
                       alignment: "right",
-                      margin: [0, 2, 0, 0],
+                      margin: [0, 0, 0, 0],
                     },
                   ],
                 },
               ],
             ],
           },
-          margin: [0, 1, 4, 1],
-        },
+          margin: [0, 0, 4, 0],
+            },
+          ]
+        : []),
       ],
     },
 

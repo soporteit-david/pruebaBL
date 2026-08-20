@@ -30,6 +30,7 @@
 
                 const mergedPdf = await PDFLib.PDFDocument.load(billOfLadingBytes);
                 const termsPdf = await PDFLib.PDFDocument.load(termsBytes);
+
                 const [termsPage] = await mergedPdf.copyPages(termsPdf, [0]);
 
                 mergedPdf.addPage(termsPage);
