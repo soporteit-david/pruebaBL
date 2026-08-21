@@ -5,12 +5,7 @@
      apps/kargoru-web/src/app/dashboard/shipment/generic-shipment-detail/
      dialog-form-quote-request/dialog-form-quote-request.component.ts
      (función buildBillOfLadingPdf, líneas 1211–2246)
-
-   CÓMO USARLO
-     1. Abre https://pdfmake.github.io/docs/playground.html
-     2. Borra todo lo que trae y pega este archivo completo.
-     3. El PDF se ve a la derecha, y se actualiza mientras editas.
-
+     
    CAMBIOS DE ESTA VERSIÓN:
      · Se eliminó la dependencia de Angular y de TypeScript.
      · Se mantiene Roboto para el Playground.
