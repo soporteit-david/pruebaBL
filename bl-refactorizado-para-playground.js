@@ -12,14 +12,25 @@
      3. El PDF se ve a la derecha, y se actualiza mientras editas.
 
    CAMBIOS DE ESTA VERSIÓN:
+     · Se eliminó la dependencia de Angular y de TypeScript.
      · Se mantiene Roboto para el Playground.
      · Se quitaron anotaciones TypeScript que el Playground no entiende.
-     · Se agregaron controles de salto de página.
-     · Las filas logísticas se manejan como bloques independientes.
+     · El encabezado conserva el diseño KARGORU y el recuadro ORIGINAL/BL
+       se maneja como un bloque independiente y centrado.
+     · El recuadro ORIGINAL/BL puede moverse con relativePosition sin
+       desplazar la barra azul ni el contenido siguiente.
+     · Se eliminó el footer repetido para aprovechar toda la página.
+     · La información principal se compactó para que quepa en una página
+       cuando la operación tiene pocos contenedores.
+     · La primera página admite hasta 10 contenedores; desde el contenedor 11
+       se inicia una segunda página para la tabla de carga.
      · La descripción de carga no tiene límite de caracteres.
      · Las descripciones muy largas se dividen en filas de continuación.
      · La tabla de contenedores utiliza dontBreakRows.
      · El encabezado de la tabla se repite cuando continúa.
+     · El documento T&C original se anexa como PDF independiente en la
+       página siguiente, conservando su formato y texto seleccionable.
+     · La suma de peso, volumen y paquetes se calcula automáticamente.
 ============================================================================= */
 
 // ————————————————————— DATOS DE LA OPERACIÓN (inventados) —————————————————————
